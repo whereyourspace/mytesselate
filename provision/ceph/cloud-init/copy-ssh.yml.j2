@@ -1,0 +1,10 @@
+---
+write_files:
+  - path: /tmp/cloud.key
+    content: |
+      ${indent(6, ssh_key)}
+    owner: root:root
+    permissions: "0600"
+  - path: /tmp/cloud.key.pub
+    content: |
+      ${indent(6, ssh_key_pub)}
