@@ -1,0 +1,5 @@
+ceph_bootstrap_monitoring:
+  deploy_stack: false
+  monitoring: false
+
+ceph_bootstrap_mon_ip: '{{ ansible_default_ipv4.address }}'

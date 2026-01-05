@@ -1,0 +1,4 @@
+- name: Install ceph management packages
+  ansible.builtin.package:
+    name:
+      - cephadm

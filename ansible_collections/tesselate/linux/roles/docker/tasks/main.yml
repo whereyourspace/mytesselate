@@ -8,6 +8,21 @@
   ansible.builtin.package:
     name: '{{ docker_packages }}'
 
+- name: Configure docker usage disk
+  block:
+    - name: Configure FS
+      community.general.filesystem:
+        dev: '{{ docker_disk.path }}'
+        fstype: '{{ docker_disk.fs }}'
+
+    - name: Configure mounts
+      ansible.posix.mount:
+        src: '{{ docker_disk.path }}'
+        path: '{{ docker_data_root }}'
+        fstype: '{{ docker_disk.fs }}'
+        state: mounted
+  when: docker_disk is defined
+
 - name: Configure dockerd service
   ansible.builtin.template:
     src: templates/daemon.json.j2

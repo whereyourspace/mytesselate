@@ -3,6 +3,7 @@
   hosts: all
   roles:
     - role: tesselate.ceph.ceph_common
+  tags: common
 
 - name: Bootstrap Ceph cluster
   become: true
@@ -10,3 +11,12 @@
   roles:
     - role: tesselate.ceph.ceph_bootstrap
       run_once: true
+  tags: bootstrap
+
+- name: Configure Ceph cluster
+  become: true
+  hosts: mgr
+  roles:
+    - role: tesselate.ceph.ceph_configuration
+      run_once: true
+  tags: configuration

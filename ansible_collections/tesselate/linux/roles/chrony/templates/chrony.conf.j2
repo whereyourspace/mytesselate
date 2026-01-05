@@ -9,6 +9,8 @@
 
 {{- helpers.dicts_directive("allow", chrony_conf.allow | default(None), [ "all", "subnet" ]) -}}
 
+{{- helpers.dict_directive("local", chrony_conf.local | default(None)) -}}
+
 {{- helpers.directive("rtcfile", chrony_conf.rtcfile | default(None)) -}}
 
 {{- helpers.directive("rtcsync", chrony_conf.rtcsync | default(None)) -}}

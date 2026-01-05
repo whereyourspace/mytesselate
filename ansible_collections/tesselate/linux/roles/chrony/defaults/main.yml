@@ -1,0 +1,12 @@
+chrony_conf:
+  pool:
+    hostname: pool.ntp.org
+    iburst: true
+  
+  logdir: /var/log/chrony
+  log:
+    selection: true
+    tracking: true
+    statistics: true
+  
+  driftfile: /var/run/chrony

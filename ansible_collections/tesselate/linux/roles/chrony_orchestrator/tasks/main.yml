@@ -12,16 +12,46 @@
 - name: Configure server nodes
   ansible.builtin.include_role:
     name: tesselate.linux.chrony
-  when: group_names | select('in', chrony_orchestrator_servers) | length > 0
+  when: (group_names | select('in', chrony_orchestrator_servers) | length > 0) and not chrony_orchestrator_public_pool.enable
   vars:
     chrony_conf:
-      server: '{{ chrony_orchestrator_sservers | reject("eq", inventory_hostname) | map("tesselate.helpers.to_dict", "hostname") | slice(chrony_orchestrator_count) | first }}'
+      allow:
+        - subnet: '{{ chrony_orchestrator_allow_subnet }}'
+      local:
+        stratum: 3
+      server: '{{ chrony_orchestrator_sservers | reject("eq", inventory_hostname) | map("tesselate.helpers.to_dict", "hostname", attrs={ "iburst": true }) | slice(chrony_orchestrator_count) | first }}'
+
       rtcsync: true
       driftfile: /var/lib/chrony/drift
       makestep:
-        threshold: 3600
-        limit: 1
+        threshold: 10
+        limit: 3
+
       logdir: /var/log/chrony
+      log:
+        tracking: true
+
+- name: Configure server with public pool
+  ansible.builtin.include_role: 
+    name: tesselate.linux.chrony
+  when: (group_names | select('in', chrony_orchestrator_servers) | length > 0) and chrony_orchestrator_public_pool.enable
+  vars:
+    chrony_conf:
+      allow:
+        - subnet: '{{ chrony_orchestrator_allow_subnet }}'
+      pool:
+        hostname: '{{ chrony_orchestrator_public_pool.pool }}'
+        iburst: true
+
+      rtcsync: true
+      driftfile: /var/lib/chrony/drift
+      makestep:
+        threshold: 10
+        limit: 3
+
+      logdir: /var/log/chrony
+      log:
+        tracking: true
 
 - name: Configure client nodes with server nodes
   ansible.builtin.include_role: 
@@ -29,25 +59,10 @@
   when: (group_names | select('in', chrony_orchestrator_clients) | length > 0) and not chrony_orchestrator_public_pool.enable
   vars:
     chrony_conf:
-      server: '{{ chrony_orchestrator_cservers | map("tesselate.helpers.to_dict", "hostname") }}'
+      server: '{{ chrony_orchestrator_cservers | map("tesselate.helpers.to_dict", "hostname", attrs={ "iburst": true }) }}'
       rtcsync: true
       makestep:
         threshold: 3600
         limit: 1
       driftfile: /var/lib/chrony/drift
       logdir: /var/log/chrony
-
-- name: Configure client nodes with public pool
-  ansible.builtin.include_role:
-    name: tesselate.linux.chrony
-  when: (group_names | select('in', chrony_orchestrator_clients) | length > 0) and chrony_orchestrator_public_pool.enable
-  vars:
-    chrony_conf:
-      server: 
-        hostname: '{{ chrony_orchestrator_public_pool.pool }}'
-        rtcsync: true
-        makestep:
-          threshold: 3600
-          limit: 1
-        driftfile: /var/lib/chrony/drift
-        logdir: /var/log/chrony

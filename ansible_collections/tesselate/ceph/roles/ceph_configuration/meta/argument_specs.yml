@@ -1,0 +1,23 @@
+argument_specs:
+  main:
+    short_description: Declaratively describes the state of the main Ceph entities
+    author: whereyourspace <whereyourspace@gmail.com>
+    version_added: 0.0.1
+    options:
+      ceph_configuration_crush_rules:
+        description:
+          - Manage crush rule(s) state(s)
+        version_added: 0.0.1
+        type: dict
+
+      ceph_configuration_pools:
+        description:
+          - Manage pool(s) state(s)
+        version_added: 0.0.1
+        type: dict
+
+      ceph_configuration_configs:
+        description:
+          - Manage ceph service(s) configs
+        version_added: 0.0.1
+        type: dict

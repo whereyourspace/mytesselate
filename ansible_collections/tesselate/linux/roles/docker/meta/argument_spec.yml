@@ -4,6 +4,9 @@ argument_spec:
     version_added: 0.0.1
     author: whereyourspace <whereyourspace@gmail.com>
     options:
+      docker_disk:
+        description:
+          - Configure disk for docker data
       docker_proxies:
         description:
           - Proxy server endpoint configs

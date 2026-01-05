@@ -1,0 +1,30 @@
+- name: Set ceph configs
+  ceph.automation.ceph_config:
+    option: '{{ item.key }}'
+    value: '{{ item.value }}'
+    who: '{{ item.service }}'
+  loop: '{{ ceph_configuration_configs | tesselate.helpers.flatten_dict(["service"]) }}'
+  loop_control:
+    label: '{{ item.service }} | {{ item.key }} : {{ item.value }}'
+
+- name: Configure crush rules
+  ceph.automation.ceph_crush_rule:
+    name: '{{ item.key | mandatory }}'
+    bucket_root: '{{ item.value.bucket_root | default(omit) }}'
+    bucket_type: '{{ item.value.bucket_type | default(omit) }}'
+    device_class: '{{ item.value.device_class | default(omit) }}'
+    rule_type: '{{ item.value.rule_type | default(omit) }}'
+    state: '{{ item.value.state | default(omit) }}'
+  loop: '{{ ceph_configuration_crush_rules | dict2items }}'
+
+- name: Configure pools
+  ceph.automation.ceph_pool:
+    name: '{{ item.key | mandatory }}'
+    application: '{{ item.value.application | default(omit) }}'
+    pool_type: '{{ item.value.pool_type | default(omit) }}'
+    pg_num: '{{ item.value.pg_num | default(omit) }}'
+    min_size: '{{ item.value.min_size | default(omit) }}'
+    size: '{{ item.value.size | default(omit) }}'
+    state: '{{ item.value.state | default(omit) }}'
+    rule_name: '{{ item.value.rule_name | default(omit) }}'
+  loop: '{{ ceph_configuration_pools | dict2items }}'

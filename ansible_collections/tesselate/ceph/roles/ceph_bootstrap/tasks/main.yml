@@ -1,3 +1,80 @@
-- name: Simple task
-  ansible.builtin.debug:
-    msg: Simple task
+- name: Checking Ceph cluster has already be bootstraped
+  ansible.builtin.state:
+    path: /etc/ceph/ceph.conf
+  register: ceph_conf
+
+- name: Bootstrap Ceph cluster with cephadm
+  ceph.automation.cephadm_bootstrap:
+    docker: true
+
+    ssh_public_key: '{{ ceph_bootstrap_ssh.public_key | default(omit) }}'
+    ssh_private_key: '{{ ceph_bootstrap_ssh.private_key | default(omit) }}'
+    ssh_user: '{{ ceph_bootstrap_ssh.user | default(omit) }}'
+
+    dashboard_password: '{{ ceph_bootstrap_dashboard_password | default(omit) }}'
+    cluster_network: '{{ ceph_bootstrap_cluster_network | default(omit) }}'
+    skip_monitoring_stack: '{{ not ceph_bootstrap_monitoring.deploy_stack }}'
+
+    mon_ip: '{{ ceph_bootstrap_mon_ip }}'
+  when: not ceph_conf.stat.exists
+
+- name: Add manager nodes to Ceph cluster
+  ceph.automation.ceph_host:
+    docker: true
+    name: '{{ hostvars[item.value]["ansible_hostname"] }}'
+    address: '{{ hostvars[item.value]["ansible_default_ipv4"]["address"] }}'
+    labels:
+      - '{{ item.service }}'
+    set_admin_label: '{{ item.service == "mgr" }}'
+  loop: '{{ [ "mgr", "mon", "osd" ] | extract(groups) | tesselate.helpers.flatten_dict([ "service" ]) }}'
+
+- name: Configure prometheus module
+  ceph.automation.ceph_mgr_module:
+    docker: true
+    name: prometheus
+    state: '{{ ((not ceph_bootstrap_monitoring.deploy_stack) and ceph_bootstrap_monitoring.enable) | ternary("enabled", "disabled") }}' 
+
+- name: Configure crash services
+  ceph.automation.ceph_orch_apply:
+    docker: true
+    spec: |
+      service_type: crash
+      service_name: crash
+      placement:
+        host_pattern: '*'
+
+- name: Configure MGR services
+  ceph.automation.ceph_orch_apply:
+    docker: true
+    spec: |
+      service_type: mgr
+      service_name: mgr
+      placement:
+        count: {{ groups["mgr"] | count }}
+        label: mgr
+
+- name: Configure MON services
+  ceph.automation.ceph_orch_apply:
+    docker: true
+    spec: |
+      service_type: mon
+      service_name: mon
+      placement:
+        count: {{ groups["mon"] | count }}
+        label: mon
+
+- name: Configure OSD services
+  ceph.automation.ceph_orch_apply:
+    docker: true
+    spec: |
+      service_type: osd
+      service_id: '{{  }}'
+      service_name: '{{ item.key }}'
+      placement:
+        count: {{ groups["osd"] | count }}
+        label: osd
+      spec: {{ item.value }}
+  loop: '{{ ceph_bootstrap_osds | dict2items }}'
+  loop_control:
+    index_var: osd_ind 
+    label: '{{ item.key }}'

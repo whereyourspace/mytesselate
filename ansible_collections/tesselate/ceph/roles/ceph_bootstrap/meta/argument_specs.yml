@@ -1,0 +1,70 @@
+argument_specs:
+  main:
+    short_description: Bootstrap ceph cluster using cephadmm
+    author: whereyourspace <whereyourspace@gmail.com>
+    version_added: 0.0.1
+    options:
+      ceph_bootstrap_mon_ip:
+        description:
+          - Specify Ceph monitor IP address
+        version_added: 0.0.1
+        type: str
+
+      ceph_bootstrap_dashboard_password:
+        description:
+          - Specify dashboard password
+        version_aded: 0.0.1
+        type: str
+
+      ceph_bootstrap_cluster_network:
+        description:
+          - Specify cluster network which will be used for replication and monitoring traffic between ceph components
+        version_added: 0.0.1
+        type: str
+
+      ceph_bootstrap_ssh:
+        description:
+          - Specify bootstrap SSH options
+        version_added: 0.0.1
+        type: dict
+        options:
+          public_key:
+            description:
+              - SSH public key used for authentication to nodes
+            version_added: 0.0.1
+            type: str
+          private_key:
+            description:
+              - SSH private key used for traffic encryption
+            version_added: 0.0.1
+            type: str
+          user:
+            description:
+              - System user with sudo privileges on nodes
+            version_added: 0.0.1
+            type: str
+
+      ceph_bootstrap_monitoring:
+        description:
+          - Specify monitoring setup options
+        version_added: 0.0.1
+        type: dict
+        options:
+          deploy_stack:
+            description:
+              - Deploy Grafana, Prometheus and related tools to store and visualize detailed metrics on cluster utilization and performance. 
+            version_added: 0.0.1
+            type: bool
+            default: false
+          enable:
+            description:
+              - Enable(V(true)) or disable(V(false)) prometheus monitoring module
+            version_added: 0.0.1
+            type: bool
+            default: false
+      
+      ceph_bootstrap_osds:
+        description:
+          - Specify OSD specs
+        version_added: 0.0.1
+        type: dict

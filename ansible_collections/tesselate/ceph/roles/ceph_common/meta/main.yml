@@ -1,4 +1,11 @@
 dependencies:
-  - role: tesselate.linux.podman
+  - role: tesselate.linux.docker
+    tags: docker
+  - role: tesselate.linux.chrony_orchestrator
     vars:
-      podman_version: latest
+      chrony_orchestrator_client_groups:
+        - mon
+        - osd
+      chrony_orchestrator_server_groups:
+        - mgr
+    tags: chrony

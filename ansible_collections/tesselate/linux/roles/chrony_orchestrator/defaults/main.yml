@@ -4,6 +4,9 @@ chrony_orchestrator_server_groups:
 chrony_orchestrator_client_groups:
   - ntp_clients
 
+chrony_orchestrator_allow_subnet:
+  - '{{ ansible_default_ipv4.subnet }}'
+
 chrony_orchestrator_count: 1
 
 chrony_orchestrator_public_pool:

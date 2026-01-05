@@ -1,0 +1,5 @@
+# tesselate.linux
+
+- [ ] Enable unit and integration tests for docker
+
+

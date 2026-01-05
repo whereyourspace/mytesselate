@@ -10,6 +10,19 @@ argument_specs:
         version_added: 0.0.1
         type: dict
         options:
+          local:
+            description:
+              - The O(local) directive enables a local reference mode, which allows chronyd operating as an NTP server
+                to appear synchronised to real time (from the viewpoint of clients polling it), even when it was never
+                synchronised or the last update of the clock happened a long time ago.
+            version_added: 0.0.1
+            type: dict
+            options:
+              stratum:
+                description:
+                  - This option sets the stratum of the server which will be reported to clients when the local reference is active.
+                version_added: 0.0.1
+                type: int
           server:
             description:
               - Specify NTP server options which can be used as a time server

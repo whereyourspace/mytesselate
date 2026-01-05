@@ -1,0 +1,4 @@
+- name: Install OSD specific packages
+  ansible.builtin.package:
+    name:
+      - ceph-volume

@@ -4,6 +4,13 @@ argument_specs:
     version_added: 0.0.1
     author: whereyourspace <whereyourspace@gmail.com>
     options:
+      chrony_orchestrator_allow_subnet:
+        description:
+          - Subnets where NTP requests to the server are allowed. Default to O(ansible_default_ipv4.subnet)
+        version_added: 0.0.1
+        type: list
+        elements: str
+
       chrony_orchestrator_server_groups:
         description:
           - A group of nodes that will be NTP servers
