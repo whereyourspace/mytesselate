@@ -9,7 +9,7 @@
 
 - name: Configure crush rules
   ceph.automation.ceph_crush_rule:
-    name: '{{ item.key | mandatory }}'
+    name: '{{ item.key }}'
     bucket_root: '{{ item.value.bucket_root | default(omit) }}'
     bucket_type: '{{ item.value.bucket_type | default(omit) }}'
     device_class: '{{ item.value.device_class | default(omit) }}'
@@ -19,7 +19,7 @@
 
 - name: Configure pools
   ceph.automation.ceph_pool:
-    name: '{{ item.key | mandatory }}'
+    name: '{{ item.key }}'
     application: '{{ item.value.application | default(omit) }}'
     pool_type: '{{ item.value.pool_type | default(omit) }}'
     pg_num: '{{ item.value.pg_num | default(omit) }}'

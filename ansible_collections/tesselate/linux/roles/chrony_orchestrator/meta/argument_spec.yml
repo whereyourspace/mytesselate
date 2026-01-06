@@ -6,7 +6,7 @@ argument_specs:
     options:
       chrony_orchestrator_allow_subnet:
         description:
-          - Subnets where NTP requests to the server are allowed. Default to O(ansible_default_ipv4.subnet)
+          - Subnets where NTP requests to the server are allowed. Default to O(ansible_default_ipv4.network)
         version_added: 0.0.1
         type: list
         elements: str

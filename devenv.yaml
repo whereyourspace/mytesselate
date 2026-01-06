@@ -1,4 +1,4 @@
 allowUnfree: true
 inputs:
   nixpkgs:
-    url: github:nixos/nixpkgs/release-25.05
+    url: github:cachix/devenv-nixpkgs/rolling-2025-10-24

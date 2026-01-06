@@ -1,7 +1,8 @@
 - name: Install common packages
   ansible.builtin.package:
-    - python3
-    - ceph-common
+    name: 
+      - python3
+      - ceph-common
   
 - name: Execute MGR specific tasks
   ansible.builtin.include_tasks: mgr.yml
@@ -9,7 +10,7 @@
 
 - name: Execute MON specific tasks
   ansible.builtin.include_tasks: mon.yml
-  when: '"mon" in grooup_names'
+  when: '"mon" in group_names'
 
 - name: Execute OSD specific tasks
   ansible.builtin.include_tasks: osd.yml

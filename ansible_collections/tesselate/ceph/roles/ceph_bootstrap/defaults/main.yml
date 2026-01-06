@@ -1,5 +1,6 @@
 ceph_bootstrap_monitoring:
   deploy_stack: false
-  monitoring: false
+  enable: false
 
-ceph_bootstrap_mon_ip: '{{ ansible_default_ipv4.address }}'
+ceph_bootstrap_dashboard_user: admin
+ceph_bootstrap_dashboard_password: Qwerty1234!

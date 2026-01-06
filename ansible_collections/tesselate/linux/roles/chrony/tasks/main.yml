@@ -24,7 +24,7 @@
         src: templates/chrony.conf.j2
         dest: /etc/chrony/chrony.conf
         mode: '0664'
-      notify: 
+      notify:
         - Restart chronyd
 
     - name: Get facts on current container

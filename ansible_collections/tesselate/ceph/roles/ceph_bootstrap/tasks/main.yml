@@ -1,5 +1,13 @@
+- name: Gather nodes facts
+  ansible.builtin.setup:
+  delegate_to: '{{ item.value }}'
+  delegate_facts: true
+  loop: '{{ groups | tesselate.helpers.extract([ "mgr", "mon", "osd" ]) | tesselate.helpers.flatten_dict([ "service" ]) }}'
+  loop_control:
+    label: '{{ item.value }}'
+
 - name: Checking Ceph cluster has already be bootstraped
-  ansible.builtin.state:
+  ansible.builtin.stat:
     path: /etc/ceph/ceph.conf
   register: ceph_conf
 
@@ -11,28 +19,31 @@
     ssh_private_key: '{{ ceph_bootstrap_ssh.private_key | default(omit) }}'
     ssh_user: '{{ ceph_bootstrap_ssh.user | default(omit) }}'
 
-    dashboard_password: '{{ ceph_bootstrap_dashboard_password | default(omit) }}'
+    dashboard_user: '{{ ceph_bootstrap_dashboard_user }}'
+    dashboard_password: '{{ ceph_bootstrap_dashboard_password }}'
+
     cluster_network: '{{ ceph_bootstrap_cluster_network | default(omit) }}'
     skip_monitoring_stack: '{{ not ceph_bootstrap_monitoring.deploy_stack }}'
 
-    mon_ip: '{{ ceph_bootstrap_mon_ip }}'
+    mon_ip: '{{ ceph_bootstrap_mon_ip | default(ansible_default_ipv4.address) }}'
   when: not ceph_conf.stat.exists
 
-- name: Add manager nodes to Ceph cluster
-  ceph.automation.ceph_host:
+- name: Add nodes to Ceph cluster
+  ceph.automation.ceph_orch_host:
     docker: true
     name: '{{ hostvars[item.value]["ansible_hostname"] }}'
     address: '{{ hostvars[item.value]["ansible_default_ipv4"]["address"] }}'
     labels:
       - '{{ item.service }}'
     set_admin_label: '{{ item.service == "mgr" }}'
-  loop: '{{ [ "mgr", "mon", "osd" ] | extract(groups) | tesselate.helpers.flatten_dict([ "service" ]) }}'
+  loop: '{{ groups | tesselate.helpers.extract([ "mgr", "mon", "osd" ]) | tesselate.helpers.flatten_dict([ "service" ]) }}'
+  loop_control:
+    label: '{{ item.value }}'
 
 - name: Configure prometheus module
   ceph.automation.ceph_mgr_module:
-    docker: true
     name: prometheus
-    state: '{{ ((not ceph_bootstrap_monitoring.deploy_stack) and ceph_bootstrap_monitoring.enable) | ternary("enabled", "disabled") }}' 
+    state: '{{ ((not ceph_bootstrap_monitoring.deploy_stack) and ceph_bootstrap_monitoring.enable) | ternary("enable", "disable") }}' 
 
 - name: Configure crash services
   ceph.automation.ceph_orch_apply:
@@ -68,8 +79,7 @@
     docker: true
     spec: |
       service_type: osd
-      service_id: '{{  }}'
-      service_name: '{{ item.key }}'
+      service_id: '{{ item.key }}'
       placement:
         count: {{ groups["osd"] | count }}
         label: osd

@@ -1,7 +1,10 @@
 docker_packages: |
   {{ 
-    [ "docker-ce", "docker-ce-cli", "docker-compose-plugin" ]
-    | zip_longest([ ], fillvalue=docker_version)
-    | map("join", "=")
-    + [ "containerd.io", "docker-buildx-plugin" ]
+      (docker_version == "latest") | ternary(
+        [ "docker-ce", "docker-ce-cli", "docker-compose-plugin", "containerd.io", "docker-buildx-plugin" ],
+        [ "docker-ce", "docker-ce-cli", "docker-compose-plugin" ]
+        | zip_longest([ ], fillvalue=docker_version)
+        | map("join", "=")
+        + [ "containerd.io", "docker-buildx-plugin" ]
+      )
   }}

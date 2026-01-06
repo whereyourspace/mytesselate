@@ -55,4 +55,5 @@ class FilterModule:
             'extract': extract,
             'format': format,
             'to_dict': to_dict,
+            'flatten_dict': flatten_dict,
         }

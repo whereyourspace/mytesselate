@@ -6,6 +6,7 @@ docker_insecure_registries: []
 
 docker_tls:
   enable: false
+  verify: false
 
 docker_logs:
   driver: json-file

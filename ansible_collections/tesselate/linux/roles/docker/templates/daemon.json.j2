@@ -1,12 +1,12 @@
 {
   "data-root": {{ docker_data_root | to_nice_json }},
-  "proxies": {{ docker_proxies | to_nice_json | indent 4 }},
-  "insecure-registries": {{ docker_insecure_registries | to_nice_json }}{{ if docker_tls.enable or docker_tls.verify }},{{ endif }}
-{{ if docker_tls.enable or docker_tls.verify }}
+  "proxies": {{ docker_proxies | to_nice_json }},
+  "insecure-registries": {{ docker_insecure_registries | to_nice_json }}{% if docker_tls.enable or docker_tls.verify %},{% endif %}
+{% if docker_tls.enable or docker_tls.verify %}
   "tls": {{ docker_tls.enable }},
   "tlscacert": {{ docker_tls.cacert | to_nice_json }},
   "tlscert": {{ docker_tls.cert | to_nice_json }},
   "tlskey": {{ docker_tls.key | to_nice_json }},
   "tlsverify": {{ docker_tls.verify | to_nice_json }}
-{{ endif }}
+{% endif %}
 }

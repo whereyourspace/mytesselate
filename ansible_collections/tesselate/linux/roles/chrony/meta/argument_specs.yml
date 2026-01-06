@@ -36,6 +36,11 @@ argument_specs:
                 version_added: 0.0.1
                 type: str
                 required: true
+              iburst:
+                description:
+                  - With this option, chronyd will start with a burst of 4-8 requests in order to make the first update of the clock sooner
+                version_added: 0.0.1
+                type: bool
               minpoll:
                 description:
                   - The minimum interval between requests sent to the server as a power of 2 in seconds
@@ -79,6 +84,11 @@ argument_specs:
                 version_added: 0.0.1
                 type: str
                 required: true
+              iburst:
+                description:
+                  - With this option, chronyd will start with a burst of 4-8 requests in order to make the first update of the clock sooner
+                version_added: 0.0.1
+                type: bool
               minpoll:
                 description:
                   - The minimum interval between requests sent to the server as a power of 2 in seconds

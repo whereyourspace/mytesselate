@@ -5,7 +5,7 @@ chrony_orchestrator_client_groups:
   - ntp_clients
 
 chrony_orchestrator_allow_subnet:
-  - '{{ ansible_default_ipv4.subnet }}'
+  - '{{ (ansible_default_ipv4.network ~ "/" ~ ansible_default_ipv4.netmask) | ansible.utils.ipaddr("network/prefix") }}'
 
 chrony_orchestrator_count: 1
 

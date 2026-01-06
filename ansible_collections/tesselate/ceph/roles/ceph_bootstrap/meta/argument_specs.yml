@@ -10,6 +10,12 @@ argument_specs:
         version_added: 0.0.1
         type: str
 
+      ceph_bootstrap_dashboard_user:
+        description:
+          - Specify dashboard user
+        version_added: 0.0.1
+        type: str
+
       ceph_bootstrap_dashboard_password:
         description:
           - Specify dashboard password
