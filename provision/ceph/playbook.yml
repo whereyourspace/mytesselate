@@ -1,6 +1,0 @@
-- name: Simple playbook
-  hosts: mon,osd
-  become: true
-  roles:
-    - role: tesselate.linux.docker
-
